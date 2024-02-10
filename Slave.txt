@@ -101,6 +101,33 @@ Done
       NOP
       NOP
       NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
+      NOP
       
       BANKSEL TRISC 
       CLRF TRISC  	; Reverse Direction of Port Cs  
@@ -119,9 +146,20 @@ Done
       ;;; APPROACH: Do a multiplication (summing Loop) & every iteration, check if the reesult is over a 100, if it is, subtract 100 & increment hunds
       
       ; NUMBER = 10, NUMBER2= 2
+      ;MOVF NumberTwo,W
+      ;MOVWF PORTD
+      
+        
+      MOVWF NumberTwo 
+      ;check if number two =0 ; END MUL
+      MOVF NumberTwo,W
+      BTFSC STATUS, Z
+      GOTO EndMul
       
       MOVF NumberOne,W
-      MOVWF PORTD
+      ;MOVWF PORTD
+    
+      
 L1
       MOVF Result, W
       ADDWF NumberOne, W ;;; Add 0-99 to W
@@ -154,6 +192,8 @@ DontIncrement
       
 EndMul      
       MOVF Result, W
+      MOVLW Tens
+      MOVWF PORTD
      
       
       ;;; ATP Result has the result of multiplication without considering overflows
@@ -231,11 +271,16 @@ TensLoop_Exit
      
      ADDWF Tens, W 		;;; 375 -> 3*10 + 7 = 37 
      
+     ;; 04 * 10
+     ;;0
+     
 
       ;MOVWF PORTD
 	    
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
      MOVWF PORTC
+     ;PRINT AT LED
+     ;MOVWF PORTD
      BSF PORTC, 7
      
      NOP 
