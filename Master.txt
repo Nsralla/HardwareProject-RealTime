@@ -42,6 +42,7 @@ Result EQU 0x37
 NumHolder EQU 0x38
 outerCounter EQU 0x39 ; Define file registers for the counters
 innerCounter EQU 0x40
+counter EQU 0X41
 ;====================================================================
 ; RESET and INTERRUPT VECTORS
 ;====================================================================
@@ -206,13 +207,19 @@ Start
       CALL xms
       CALL inid
     
+    
+    ;CLEAR THE FIRST LINE
+     CALL clearFirstLine
+     NOP
+     NOP
+     NOP
       ; Code Here!
       CALL printMessage
       CALL printMessage
       CALL printMessage
-      
+      NOP
       CALL print1 ;; 2nd line 00 -> INTERRUPT & Change 
-      
+      NOP
       CALL printNumberOne
       
       
@@ -513,6 +520,9 @@ HundsLoop_Exit
     ADDWF Hunds, F  
   
 
+  
+  CALL printResult
+   
 
     ; call function to display result
     CALL DisplayResult
@@ -522,23 +532,36 @@ HundsLoop_Exit
 endLoop      
        GOTO endLoop
 ;====================================================================
-
 printMessage:
+   NOP
+   
+   BCF Select, RS
+   MOVLW	0x80	; DDRAM address for the first position of the first line
+   CALL	send	; and send command
    MOVLW 'W'
    BSF Select, RS
    CALL send
+   
+   
+      NOP
    MOVLW 'E'
    CALL send
+      NOP
    MOVLW 'L'
    CALL send
+      NOP
    MOVLW 'C'
    CALL send
+      NOP
    MOVLW 'O'
    call send
+      NOP
    MOVLW 'M'
    call send
+      NOP
    MOVLW 'E'
    call send
+      NOP
    
    
    BCF Select, RS
@@ -548,34 +571,49 @@ printMessage:
    BSF Select, RS
     MOVLW 'M'
     call send
+       NOP
     MOVLW 'U'
     call send
+       NOP
     MOVLW 'L'
     call send
+       NOP
     MOVLW 'T'
     call send
+       NOP
     MOVLW 'I'
     call send
+       NOP
     MOVLW 'P'
     call send
+       NOP
     MOVLW 'L'
     call send
+       NOP
     MOVLW 'I'
     call send
+       NOP
     MOVLW 'C'
     call send
+       NOP
     MOVLW 'A'
     call send
+       NOP
     MOVLW 'T'
     call send
+       NOP
     MOVLW 'I'
     call send
+       NOP
     MOVLW 'O'
     call send
+       NOP
     MOVLW 'N'
     call send
+       NOP
     
     
+    CALL Delay1Sec
     CALL Delay1Sec
   
     
@@ -604,6 +642,11 @@ Delay1Sec:
 RETURN
 ;=====================================================================
 print1:
+   NOP
+   NOP	
+;CLEAR THE FIRST LINE
+   CALL clearFirstLine
+   
    BCF Select, RS
    MOVLW	0x80	; DDRAM address for the first position of the first line
    CALL	send	; and send command
@@ -632,14 +675,20 @@ print1:
       
     MOVLW '1'
     call send
+    
+    NOP
+    NOP
+    NOP
 
 
 RETURN   
 
 ;=====================================================================
 printNumberOne
+	 ;CALL clearSecondLine
+	 ;NOP
 	 ;; go to start of line 2
-	 BANKSEL PORTD
+	BANKSEL PORTD
 	BCF Select, RS
 	MOVLW	0xC0
 	CALL	send
@@ -661,6 +710,7 @@ printNumberOne
 RETURN
 ;=====================================================================
  SECONDNUM
+ 
     BANKSEL PORTD
     BCF Select, RS
     MOVLW	0x80	; DDRAM address for the first position of the first line
@@ -737,7 +787,7 @@ printNumberTwo
 RETURN
 ;===================================================================
 DisplayResult
-  BANKSEL PORTD
+      BANKSEL PORTD
       BCF Select, RS
       MOVLW	0xC0	; DDRAM address for the second line
       CALL	send		; and send command
@@ -780,5 +830,76 @@ DisplayResult
       
       
 RETURN
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+printResult
+   ; display the world 'result'
+    BCF Select, RS
+    MOVLW 0x80	; DDRAM address for the first position of the first line
+    CALL send	; and send command
+    BSF Select, RS
+    MOVLW 'R'
+    call send
+    MOVLW 'E'
+    call send
+    MOVLW 'S'
+    call send
+    MOVLW 'U'
+    call send
+    MOVLW 'L'
+    call send
+    MOVLW 'T'
+    call send
+    MOVLW ':'
+    CALL send
+    
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    
+
+RETURN
 ;===================================================================
+; Clear the first line of the LCD
+clearFirstLine
+    BANKSEL PORTD
+    BCF Select, RS         ; Command mode
+    MOVLW   0x80           ; DDRAM address for the first position of the first line
+    CALL    send           ; Set cursor to the start of the first line
+    
+    BSF Select, RS         ; Data mode to write characters
+    MOVLW   16             ; Number of characters in the first line
+    MOVWF   counter        ; Initialize loop counter
+
+clearLoop:
+    MOVLW   ' '            ; ASCII code for space
+    CALL    send           ; Write space to current cursor position
+    DECFSZ  counter, F     ; Decrement counter and skip next line if zero
+    GOTO    clearLoop      ; Repeat until all positions are filled with spaces
+    NOP
+    NOP
+    NOP
+
+    RETURN
+ ;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>...   
+clearSecondLine
+      BANKSEL PORTD
+      BCF Select, RS
+      MOVLW	0xC0	; DDRAM address for the second line
+      CALL	send		; and send command
+      
+         BSF Select, RS         ; Data mode to write characters
+    MOVLW   16             ; Number of characters in the first line
+    MOVWF   counter        ; Initialize loop counter
+
+clearLoop2:
+    MOVLW   ' '            ; ASCII code for space
+    CALL    send           ; Write space to current cursor position
+    DECFSZ  counter, F     ; Decrement counter and skip next line if zero
+    GOTO    clearLoop2      ; Repeat until all positions are filled with spaces
+      
+
+RETURN
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>...
 END
