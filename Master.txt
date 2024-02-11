@@ -220,6 +220,7 @@ Start
       NOP
       CALL print1 ;; 2nd line 00 -> INTERRUPT & Change 
       NOP
+      CALL xms
       CALL printNumberOne
       
       
@@ -615,6 +616,10 @@ printMessage:
     
     CALL Delay1Sec
     CALL Delay1Sec
+    CALL xms
+    CALL xms
+    call xms
+    
   
     
     BCF Select, RS 
