@@ -66,3 +66,4 @@ simulator if you wish to make sure the behavior is correct.
 • Send the zipped folder that contains the MPLAB code for both projects before the
 deadline. If the deadline is reached and you are still having problems with your code,
 just send it as is!
+<img width="847" alt="image" src="https://github.com/Nsralla/HardwareProject-RealTime/assets/122102030/086d25b4-988c-4915-8c25-bf2ca85e17f2">
